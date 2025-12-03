@@ -38,7 +38,8 @@ spec:
 
         stage('Run Sanity Tests') {
             steps {
-                sh 'npx playwright test --reporter=html,junit'
+                // Playwright will generate HTML and JUnit reports
+                sh 'npx playwright test --reporter=html,junit --output=test-results'
             }
         }
 
@@ -48,8 +49,8 @@ spec:
             }
             steps {
                 script {
-                    if (fileExists('scripts/testiny-reporter.js')) {
-                        sh 'node scripts/testiny-reporter.js'
+                    if (fileExists('testiny-reporter.js')) {
+                        sh 'node testiny-reporter.js'
                     } else {
                         echo "Testiny reporter script not found, skipping upload."
                     }
@@ -60,11 +61,11 @@ spec:
 
     post {
         always {
-            // Archive Playwright HTML reports
+            // Archive HTML reports
             archiveArtifacts artifacts: 'playwright-report/**', allowEmptyArchive: true
 
             // Record JUnit XML results for Jenkins
-            junit 'test-results/**/*.xml'
+            junit 'test-results/*.xml'
         }
     }
 }
