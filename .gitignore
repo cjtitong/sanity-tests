@@ -1,0 +1,23 @@
+# Node modules
+node_modules/
+
+# Environment files
+.env
+
+# VSCode settings
+.vscode/
+
+# Logs
+*.log
+
+# Playwright test outputs
+playwright-report/
+test-results/
+*.zip   # Playwright test results archive (if any)
+*.json  # Optional: temp JSON reports
+*.png   # Screenshots
+*.webm  # Video files
+
+# OS-specific files
+.DS_Store
+Thumbs.db
