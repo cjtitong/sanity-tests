@@ -9,7 +9,7 @@ kind: Pod
 spec:
   containers:
   - name: node
-    image: mcr.microsoft.com/playwright:v1.57.0-focal  # Updated to match Playwright version
+    image: mcr.microsoft.com/playwright:v1.57.0-noble  # Updated to supported Playwright image tag
     command:
     - cat
     tty: true
