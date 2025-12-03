@@ -1,8 +1,19 @@
 pipeline {
     agent {
-        docker { 
-            image 'mcr.microsoft.com/playwright:focal'  // Official Playwright image
-            args '-u root:root'                          // Run as root to avoid permission issues
+        kubernetes {
+            label 'playwright-agent'
+            defaultContainer 'node'
+            yaml """
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - name: node
+    image: mcr.microsoft.com/playwright:focal  # Official Playwright image
+    command:
+    - cat
+    tty: true
+"""
         }
     }
 
@@ -12,18 +23,10 @@ pipeline {
         TESTINY_TEST_RUN_ID = credentials('TESTINY_TEST_RUN_ID')
     }
 
-    options {
-        skipDefaultCheckout(true)
-        timestamps()
-    }
-
     stages {
-        stage('Checkout Code') {
+        stage('Checkout') {
             steps {
-                checkout([$class: 'GitSCM', 
-                    branches: [[name: '*/main']],
-                    userRemoteConfigs: [[url: 'https://github.com/cjtitong/sanity-tests.git']]
-                ])
+                checkout scm
             }
         }
 
@@ -48,10 +51,10 @@ pipeline {
 
     post {
         always {
-            // Archive Playwright report for reference
+            // Archive HTML reports for reference
             archiveArtifacts artifacts: 'playwright-report/**', allowEmptyArchive: true
 
-            // JUnit results if you generate XML reports
+            // Record JUnit XML results if available
             junit 'test-results/**/*.xml'
         }
     }
