@@ -38,8 +38,8 @@ spec:
 
         stage('Run Sanity Tests') {
             steps {
-                // Run Playwright headless, generate both HTML and JUnit reports
-                sh 'npx playwright test --headless --reporter=html,junit'
+                // Playwright reads headless mode from config
+                sh 'npx playwright test --reporter=html,junit'
             }
         }
 
