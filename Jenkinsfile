@@ -38,7 +38,8 @@ spec:
 
         stage('Run Sanity Tests') {
             steps {
-                sh 'npx playwright test --headed=false --reporter=html'
+                // Run Playwright headless, generate both HTML and JUnit reports
+                sh 'npx playwright test --headless --reporter=html,junit'
             }
         }
 
@@ -54,7 +55,7 @@ spec:
             // Archive HTML reports for reference
             archiveArtifacts artifacts: 'playwright-report/**', allowEmptyArchive: true
 
-            // Record JUnit XML results if available
+            // Record JUnit XML results for Jenkins
             junit 'test-results/**/*.xml'
         }
     }
