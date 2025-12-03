@@ -9,7 +9,7 @@ kind: Pod
 spec:
   containers:
   - name: node
-    image: mcr.microsoft.com/playwright:v1.57.0-noble  # Updated to supported Playwright image tag
+    image: mcr.microsoft.com/playwright:v1.57.0-noble
     command:
     - cat
     tty: true
@@ -38,7 +38,6 @@ spec:
 
         stage('Run Sanity Tests') {
             steps {
-                // Playwright reads headless mode from config
                 sh 'npx playwright test --reporter=html,junit'
             }
         }
@@ -48,14 +47,20 @@ spec:
                 expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
             }
             steps {
-                sh 'node scripts/upload-to-testiny.js'
+                script {
+                    if (fileExists('scripts/testiny-reporter.js')) {
+                        sh 'node scripts/testiny-reporter.js'
+                    } else {
+                        echo "Testiny reporter script not found, skipping upload."
+                    }
+                }
             }
         }
     }
 
     post {
         always {
-            // Archive HTML reports for reference
+            // Archive Playwright HTML reports
             archiveArtifacts artifacts: 'playwright-report/**', allowEmptyArchive: true
 
             // Record JUnit XML results for Jenkins
