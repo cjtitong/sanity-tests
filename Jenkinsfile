@@ -38,8 +38,7 @@ spec:
 
         stage('Run Sanity Tests') {
             steps {
-                // Playwright will generate HTML and JUnit reports
-                sh 'npx playwright test --reporter=html,junit --output=test-results'
+                sh 'npx playwright test'
             }
         }
 
@@ -61,11 +60,11 @@ spec:
 
     post {
         always {
-            // Archive HTML reports
+            // Archive Playwright HTML reports
             archiveArtifacts artifacts: 'playwright-report/**', allowEmptyArchive: true
 
             // Record JUnit XML results for Jenkins
-            junit 'test-results/*.xml'
+            junit 'test-results/results.xml'
         }
     }
 }
