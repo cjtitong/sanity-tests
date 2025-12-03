@@ -9,7 +9,7 @@ kind: Pod
 spec:
   containers:
   - name: node
-    image: mcr.microsoft.com/playwright:focal  # Official Playwright image
+    image: mcr.microsoft.com/playwright:v1.57.0-focal  # Updated to match Playwright version
     command:
     - cat
     tty: true
@@ -44,6 +44,9 @@ spec:
         }
 
         stage('Upload Results to Testiny') {
+            when {
+                expression { currentBuild.resultIsBetterOrEqualTo('SUCCESS') }
+            }
             steps {
                 sh 'node scripts/upload-to-testiny.js'
             }
