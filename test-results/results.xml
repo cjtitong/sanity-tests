@@ -1,0 +1,82 @@
+<testsuites id="" name="" tests="6" failures="0" skipped="0" errors="0" time="132.090383">
+<testsuite name="tests\donor\01_homepage.spec.js" timestamp="2025-12-02T21:55:52.965Z" hostname="" tests="1" failures="0" skipped="0" time="82.39" errors="0">
+<testcase name="Homepage loads and all buttons redirect properly" classname="tests\donor\01_homepage.spec.js" time="82.39">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|tests-donor-01_homepage-Ho-613ab-l-buttons-redirect-properly\test-finished-1.png]]
+
+[[ATTACHMENT|tests-donor-01_homepage-Ho-613ab-l-buttons-redirect-properly\video-1.webm]]
+
+[[ATTACHMENT|tests-donor-01_homepage-Ho-613ab-l-buttons-redirect-properly\video.webm]]
+
+[[ATTACHMENT|tests-donor-01_homepage-Ho-613ab-l-buttons-redirect-properly\trace.zip]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="tests\donor\02_trendingCampaign.spec.js" timestamp="2025-12-02T21:55:52.965Z" hostname="" tests="1" failures="0" skipped="0" time="45.506" errors="0">
+<testcase name="User can open first trending campaign" classname="tests\donor\02_trendingCampaign.spec.js" time="45.506">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|tests-donor-02_trendingCam-844d0-pen-first-trending-campaign\test-finished-1.png]]
+
+[[ATTACHMENT|tests-donor-02_trendingCam-844d0-pen-first-trending-campaign\video.webm]]
+
+[[ATTACHMENT|tests-donor-02_trendingCam-844d0-pen-first-trending-campaign\trace.zip]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="tests\donor\03_startagivesendgo.spec.js" timestamp="2025-12-02T21:55:52.965Z" hostname="" tests="1" failures="0" skipped="0" time="42.144" errors="0">
+<testcase name="Start a GiveSendGo" classname="tests\donor\03_startagivesendgo.spec.js" time="42.144">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|tests-donor-03_startagivesendgo-Start-a-GiveSendGo\test-finished-1.png]]
+
+[[ATTACHMENT|tests-donor-03_startagivesendgo-Start-a-GiveSendGo\video.webm]]
+
+[[ATTACHMENT|tests-donor-03_startagivesendgo-Start-a-GiveSendGo\trace.zip]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="tests\donor\04_donationForm.spec.js" timestamp="2025-12-02T21:55:52.965Z" hostname="" tests="1" failures="0" skipped="0" time="42.165" errors="0">
+<testcase name="Donation form loads from a trending campaign" classname="tests\donor\04_donationForm.spec.js" time="42.165">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|tests-donor-04_donationFor-9d437-ds-from-a-trending-campaign\test-finished-1.png]]
+
+[[ATTACHMENT|tests-donor-04_donationFor-9d437-ds-from-a-trending-campaign\video.webm]]
+
+[[ATTACHMENT|tests-donor-04_donationFor-9d437-ds-from-a-trending-campaign\trace.zip]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="tests\donor\05_mobileResponsive.spec.js" timestamp="2025-12-02T21:55:52.965Z" hostname="" tests="1" failures="0" skipped="0" time="24.847" errors="0">
+<testcase name="Mobile responsive layout" classname="tests\donor\05_mobileResponsive.spec.js" time="24.847">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|tests-donor-05_mobileResponsive-Mobile-responsive-layout\test-finished-1.png]]
+
+[[ATTACHMENT|tests-donor-05_mobileResponsive-Mobile-responsive-layout\trace.zip]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="tests\donor\06_brokenImages.spec.js" timestamp="2025-12-02T21:55:52.965Z" hostname="" tests="1" failures="0" skipped="0" time="42.371" errors="0">
+<testcase name="No broken images on homepage" classname="tests\donor\06_brokenImages.spec.js" time="42.371">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|tests-donor-06_brokenImages-No-broken-images-on-homepage\test-finished-1.png]]
+
+[[ATTACHMENT|tests-donor-06_brokenImages-No-broken-images-on-homepage\test-finished-2.png]]
+
+[[ATTACHMENT|tests-donor-06_brokenImages-No-broken-images-on-homepage\video.webm]]
+
+[[ATTACHMENT|tests-donor-06_brokenImages-No-broken-images-on-homepage\trace.zip]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+</testsuites>

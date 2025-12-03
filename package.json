@@ -1,0 +1,17 @@
+{
+  "name": "gsg-automation",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "test": "playwright test"
+  },
+  "dependencies": {
+    "@faker-js/faker": "^8.4.1",
+    "@testiny/automation": "^1.29.0",
+    "axios": "^1.13.2",
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.57.0"
+  }
+}
