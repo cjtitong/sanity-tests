@@ -1,6 +1,5 @@
 import fetch from 'node-fetch';
 
-// Parse CLI argument --testRunName
 let testRunNameArg = null;
 process.argv.forEach(arg => {
   if (arg.startsWith('--testRunName=')) {
@@ -11,9 +10,17 @@ process.argv.forEach(arg => {
 class TestinyReporter {
   constructor() {
     this.results = [];
+
     this.testRunName = testRunNameArg || process.env.TEST_RUN_NAME;
-    if (!this.testRunName) throw new Error('Test run name is required.');
-    this.testRunId = null;
+    if (!this.testRunName) {
+      throw new Error('Test run name is required. Pass via --testRunName or TEST_RUN_NAME env variable.');
+    }
+
+    if (!process.env.TESTINY_API_KEY || !process.env.TESTINY_PROJECT_ID) {
+      throw new Error('Missing TESTINY_API_KEY or TESTINY_PROJECT_ID environment variable.');
+    }
+
+    this.testRunId = null; 
   }
 
   onTestBegin(test) {
@@ -47,7 +54,7 @@ class TestinyReporter {
     });
 
     if (!response.ok) {
-      throw new Error(await response.text());
+      throw new Error(`Failed to create Testiny run: ${await response.text()}`);
     }
 
     const data = await response.json();
@@ -57,7 +64,7 @@ class TestinyReporter {
 
   async onEnd() {
     try {
-      // Always create a new run
+      
       await this.createTestRun();
 
       console.log('Uploading test results to Testiny...');

@@ -23,7 +23,7 @@ spec:
         PIPELINE_NAME = "${env.JOB_NAME}"
         BRANCH_NAME = "${env.GIT_BRANCH}"
         BUILD_NUMBER = "${env.BUILD_NUMBER}"
-        SHORT_COMMIT = "" 
+        SHORT_COMMIT = ""
     }
 
     stages {
@@ -35,7 +35,7 @@ spec:
                     SHORT_COMMIT = sh(script: "git rev-parse --short=7 HEAD", returnStdout: true).trim()
                     env.SHORT_COMMIT = SHORT_COMMIT
 
-                    // Generate unique test run name for each build
+                    // Unique test run name per build
                     env.TEST_RUN_NAME = "${env.PIPELINE_NAME} - ${env.BRANCH_NAME} - #${env.BUILD_NUMBER} - ${env.SHORT_COMMIT}"
                     echo "Testiny Test Run Name: ${env.TEST_RUN_NAME}"
                 }
@@ -55,7 +55,6 @@ spec:
             steps {
                 script {
                     if (fileExists('testiny-reporter.js')) {
-                        // Pass the generated test run name via CLI
                         sh "node testiny-reporter.js --testRunName='${env.TEST_RUN_NAME}'"
                     } else {
                         echo "Testiny reporter script not found, skipping upload."
