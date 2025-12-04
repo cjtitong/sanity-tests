@@ -10,20 +10,21 @@ process.argv.forEach(arg => {
 class TestinyReporter {
   constructor() {
     this.results = [];
+    this.testRunName = testRunNameArg || process.env.TEST_RUN_NAME;
+    if (!this.testRunName) {
+      throw new Error('Test run name is required. Pass via --testRunName or TEST_RUN_NAME env variable.');
+    }
 
-    
-    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-    this.testRunName = testRunNameArg || process.env.TEST_RUN_NAME || `run-${timestamp}`;
-    
     if (!process.env.TESTINY_API_KEY || !process.env.TESTINY_PROJECT_ID) {
-      throw new Error('Missing TESTINY_API_KEY or TESTINY_PROJECT_ID environment variables.');
+      throw new Error('Missing TESTINY_API_KEY or TESTINY_PROJECT_ID environment variable.');
     }
 
     this.testRunId = null;
   }
 
-  async createTestRun() {
-    console.log(`Creating a new Testiny test run: ${this.testRunName}`);
+  async initializeTestRun() {
+    if (this.testRunId) return; 
+    console.log('Creating a new Testiny test run...');
     const payload = {
       projectId: process.env.TESTINY_PROJECT_ID,
       name: this.testRunName,
@@ -48,9 +49,7 @@ class TestinyReporter {
   }
 
   async onTestBegin(test) {
-    if (!this.testRunId) {
-      await this.createTestRun();
-    }
+    if (!this.testRunId) await this.initializeTestRun();
     console.log(`Starting test: ${test.title}`);
   }
 
@@ -65,9 +64,7 @@ class TestinyReporter {
   }
 
   async onEnd() {
-    if (!this.testRunId) {
-      await this.createTestRun();
-    }
+    if (!this.testRunId) await this.initializeTestRun();
 
     console.log('Uploading test results to Testiny...');
     const payload = {
@@ -94,13 +91,9 @@ class TestinyReporter {
 }
 
 
-if (require.main === module) {
-  (async () => {
-    const reporter = new TestinyReporter();
-
-    
-    await reporter.onEnd();
-  })();
+if (process.argv.includes('--run')) {
+  const reporter = new TestinyReporter();
+  await reporter.onEnd();
 }
 
 export default TestinyReporter;

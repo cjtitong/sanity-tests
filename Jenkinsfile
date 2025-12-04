@@ -32,13 +32,11 @@ spec:
                 checkout scm
                 script {
                     sh 'git config --global --add safe.directory $WORKSPACE'
-
                     SHORT_COMMIT = sh(script: "git rev-parse --short=7 HEAD", returnStdout: true).trim()
                     env.SHORT_COMMIT = SHORT_COMMIT
 
                     
-                    def timestamp = new Date().format("yyyyMMdd-HHmmss")
-                    env.TEST_RUN_NAME = "${env.PIPELINE_NAME}-${env.BRANCH_NAME}-#${env.BUILD_NUMBER}-${env.SHORT_COMMIT}-${timestamp}"
+                    env.TEST_RUN_NAME = "${env.PIPELINE_NAME}-${env.BRANCH_NAME}-#${env.BUILD_NUMBER}-${env.SHORT_COMMIT}"
                     echo "Testiny Test Run Name: ${env.TEST_RUN_NAME}"
                 }
             }
@@ -58,7 +56,7 @@ spec:
                 script {
                     if (fileExists('testiny-reporter.js')) {
                         
-                        sh "node testiny-reporter.js --testRunName='${env.TEST_RUN_NAME}'"
+                        sh "node --experimental-specifier-resolution=node testiny-reporter.js --testRunName='${env.TEST_RUN_NAME}' --run"
                     } else {
                         echo "Testiny reporter script not found, skipping upload."
                     }
