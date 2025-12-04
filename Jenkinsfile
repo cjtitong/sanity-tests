@@ -20,12 +20,10 @@ spec:
     environment {
         TESTINY_API_KEY = credentials('TESTINY_API_KEY')
         TESTINY_PROJECT_ID = credentials('TESTINY_PROJECT_ID')
-        // Remove TESTINY_TEST_RUN_ID, dynamic creation will be used
-        TEST_RUN_ID = "ATR-15" // Internal test run ID
         PIPELINE_NAME = "${env.JOB_NAME}"
         BRANCH_NAME = "${env.GIT_BRANCH}"
         BUILD_NUMBER = "${env.BUILD_NUMBER}"
-        SHORT_COMMIT = "" // Will be set in checkout stage
+        SHORT_COMMIT = "" 
     }
 
     stages {
@@ -33,12 +31,13 @@ spec:
             steps {
                 checkout scm
                 script {
+                    
                     sh 'git config --global --add safe.directory $WORKSPACE'
 
                     SHORT_COMMIT = sh(script: "git rev-parse --short=7 HEAD", returnStdout: true).trim()
                     env.SHORT_COMMIT = SHORT_COMMIT
 
-                    env.TEST_RUN_NAME = "${env.TEST_RUN_ID} - ${env.PIPELINE_NAME} - ${env.BRANCH_NAME} - #${env.BUILD_NUMBER} - ${env.SHORT_COMMIT}"
+                    env.TEST_RUN_NAME = "${env.PIPELINE_NAME} - ${env.BRANCH_NAME} - #${env.BUILD_NUMBER} - ${env.SHORT_COMMIT}"
                     echo "Testiny Test Run Name: ${env.TEST_RUN_NAME}"
                 }
             }

@@ -1,8 +1,7 @@
 import fetch from 'node-fetch';
 
-// Parse CLI argument for --testRunName
 let testRunNameArg = null;
-process.argv.forEach((arg) => {
+process.argv.forEach(arg => {
   if (arg.startsWith('--testRunName=')) {
     testRunNameArg = arg.split('=')[1];
   }
@@ -11,9 +10,10 @@ process.argv.forEach((arg) => {
 class TestinyReporter {
   constructor() {
     this.results = [];
-    // Use CLI argument first, then environment variable
+
     this.testRunName = testRunNameArg || process.env.TEST_RUN_NAME || null;
-    this.testRunId = null; // Will be set after creating a new test run
+
+    this.testRunId = null;
   }
 
   onTestBegin(test) {
@@ -32,6 +32,10 @@ class TestinyReporter {
   }
 
   async createTestRun() {
+    if (!this.testRunName) {
+      throw new Error('Test run name is missing. Pass it via --testRunName or TEST_RUN_NAME env variable.');
+    }
+
     console.log('Creating a new Testiny test run...');
     const payload = {
       projectId: process.env.TESTINY_PROJECT_ID,
@@ -53,7 +57,7 @@ class TestinyReporter {
       }
 
       const data = await response.json();
-      this.testRunId = data.id; // Capture the new run ID
+      this.testRunId = data.id;
       console.log(`Created Testiny test run with ID: ${this.testRunId}`);
     } catch (err) {
       console.error('Failed to create new test run:', err);
@@ -64,14 +68,13 @@ class TestinyReporter {
   async onEnd() {
     try {
       if (!this.testRunId) {
-        await this.createTestRun(); // Ensure we have a test run ID
+        await this.createTestRun();
       }
 
       console.log('Sending test results to Testiny...');
-
       const payload = {
         projectId: process.env.TESTINY_PROJECT_ID,
-        testRunId: this.testRunId, // use dynamically created ID
+        testRunId: this.testRunId,
         results: this.results,
       };
 
@@ -85,7 +88,7 @@ class TestinyReporter {
       });
 
       if (!response.ok) {
-        console.error('Failed to send results to Testiny:', await response.text());
+        console.error('Failed to send results:', await response.text());
       } else {
         console.log('Results successfully sent to Testiny!');
       }
