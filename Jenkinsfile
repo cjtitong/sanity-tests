@@ -21,12 +21,25 @@ spec:
         TESTINY_API_KEY = credentials('TESTINY_API_KEY')
         TESTINY_PROJECT_ID = credentials('TESTINY_PROJECT_ID')
         TESTINY_TEST_RUN_ID = credentials('TESTINY_TEST_RUN_ID')
+        TEST_RUN_ID = "ATR-15" // Your internal test run ID
+        PIPELINE_NAME = "${env.JOB_NAME}" // Jenkins pipeline name
+        BRANCH_NAME = "${env.GIT_BRANCH}" // Git branch
+        BUILD_NUMBER = "${env.BUILD_NUMBER}" // Jenkins build number
+        SHORT_COMMIT = "" // Will be set in checkout stage
     }
 
     stages {
         stage('Checkout') {
             steps {
                 checkout scm
+                script {
+                    // Get short commit hash (7 chars)
+                    SHORT_COMMIT = sh(script: "git rev-parse --short=7 HEAD", returnStdout: true).trim()
+                    env.SHORT_COMMIT = SHORT_COMMIT
+                    // Generate Testiny test run name
+                    env.TEST_RUN_NAME = "${env.TEST_RUN_ID} - ${env.PIPELINE_NAME} - ${env.BRANCH_NAME} - #${env.BUILD_NUMBER} - ${env.SHORT_COMMIT}"
+                    echo "Testiny Test Run Name: ${env.TEST_RUN_NAME}"
+                }
             }
         }
 
@@ -49,7 +62,8 @@ spec:
             steps {
                 script {
                     if (fileExists('testiny-reporter.js')) {
-                        sh 'node testiny-reporter.js'
+                        // Pass the generated test run name to the reporter
+                        sh "node testiny-reporter.js --testRunName='${env.TEST_RUN_NAME}'"
                     } else {
                         echo "Testiny reporter script not found, skipping upload."
                     }

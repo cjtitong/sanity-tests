@@ -3,18 +3,18 @@ import fetch from 'node-fetch';
 class TestinyReporter {
   constructor() {
     this.results = [];
+    // Allow passing testRunName via env variable or CLI argument
+    this.testRunName = process.env.TEST_RUN_NAME || null;
   }
 
-  
   onTestBegin(test) {
     console.log(`Starting test: ${test.title}`);
   }
 
-  
   onTestEnd(test, result) {
     const testResult = {
       title: test.title,
-      status: result.status, 
+      status: result.status,
       duration: result.duration,
       errors: result.errors.map(e => e.message),
     };
@@ -22,13 +22,13 @@ class TestinyReporter {
     console.log(`Finished test: ${test.title} → ${result.status}`);
   }
 
-  
   async onEnd() {
     console.log('All tests finished. Sending results to Testiny...');
 
     const payload = {
       projectId: process.env.TESTINY_PROJECT_ID,
       testRunId: process.env.TESTINY_TEST_RUN_ID,
+      testRunName: this.testRunName, // include the generated name
       results: this.results,
     };
 
