@@ -37,7 +37,8 @@ spec:
                     env.SHORT_COMMIT = SHORT_COMMIT
 
                     
-                    env.TEST_RUN_NAME = "${env.PIPELINE_NAME}-${env.BRANCH_NAME}-#${env.BUILD_NUMBER}-${env.SHORT_COMMIT}"
+                    def timestamp = new Date().format("yyyyMMdd-HHmmss")
+                    env.TEST_RUN_NAME = "${env.PIPELINE_NAME}-${env.BRANCH_NAME}-#${env.BUILD_NUMBER}-${env.SHORT_COMMIT}-${timestamp}"
                     echo "Testiny Test Run Name: ${env.TEST_RUN_NAME}"
                 }
             }
