@@ -11,9 +11,9 @@ class TestinyReporter {
   constructor() {
     this.results = [];
 
-    this.testRunName = testRunNameArg || process.env.TEST_RUN_NAME;
+    this.testRunName = testRunNameArg || process.env.TEST_RUN_NAME || this.generateFallbackName();
     if (!this.testRunName) {
-      throw new Error('Test run name is required. Pass via --testRunName or TEST_RUN_NAME env variable.');
+      throw new Error('Test run name is required.');
     }
 
     if (!process.env.TESTINY_API_KEY || !process.env.TESTINY_PROJECT_ID) {
@@ -21,6 +21,15 @@ class TestinyReporter {
     }
 
     this.testRunId = null;
+  }
+
+  generateFallbackName() {
+    const pipeline = process.env.JOB_NAME || 'local-pipeline';
+    let branch = process.env.GIT_BRANCH || 'main';
+    branch = branch.replace('origin/', ''); 
+    const build = process.env.BUILD_NUMBER || '0';
+    const commit = process.env.SHORT_COMMIT || 'unknown';
+    return `${pipeline} Build #${build} (${branch} @ ${commit})`;
   }
 
   async initializeTestRun() {
@@ -49,7 +58,6 @@ class TestinyReporter {
   }
 
   async onTestBegin(test) {
-    
     if (!this.testRunId) {
       await this.initializeTestRun();
     }
