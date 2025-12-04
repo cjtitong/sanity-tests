@@ -20,24 +20,10 @@ class TestinyReporter {
       throw new Error('Missing TESTINY_API_KEY or TESTINY_PROJECT_ID environment variable.');
     }
 
-    this.testRunId = null; 
+    this.testRunId = null;
   }
 
-  onTestBegin(test) {
-    console.log(`Starting test: ${test.title}`);
-  }
-
-  onTestEnd(test, result) {
-    this.results.push({
-      title: test.title,
-      status: result.status,
-      duration: result.duration,
-      errors: result.errors.map(e => e.message),
-    });
-    console.log(`Finished test: ${test.title} → ${result.status}`);
-  }
-
-  async createTestRun() {
+  async initializeTestRun() {
     console.log('Creating a new Testiny test run...');
     const payload = {
       projectId: process.env.TESTINY_PROJECT_ID,
@@ -62,34 +48,49 @@ class TestinyReporter {
     console.log(`Created Testiny test run with ID: ${this.testRunId}`);
   }
 
+  async onTestBegin(test) {
+    
+    if (!this.testRunId) {
+      await this.initializeTestRun();
+    }
+    console.log(`Starting test: ${test.title}`);
+  }
+
+  onTestEnd(test, result) {
+    this.results.push({
+      title: test.title,
+      status: result.status,
+      duration: result.duration,
+      errors: result.errors.map(e => e.message),
+    });
+    console.log(`Finished test: ${test.title} → ${result.status}`);
+  }
+
   async onEnd() {
-    try {
-      
-      await this.createTestRun();
+    if (!this.testRunId) {
+      await this.initializeTestRun();
+    }
 
-      console.log('Uploading test results to Testiny...');
-      const payload = {
-        projectId: process.env.TESTINY_PROJECT_ID,
-        testRunId: this.testRunId,
-        results: this.results,
-      };
+    console.log('Uploading test results to Testiny...');
+    const payload = {
+      projectId: process.env.TESTINY_PROJECT_ID,
+      testRunId: this.testRunId,
+      results: this.results,
+    };
 
-      const response = await fetch('https://api.testiny.com/results', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${process.env.TESTINY_API_KEY}`,
-        },
-        body: JSON.stringify(payload),
-      });
+    const response = await fetch('https://api.testiny.com/results', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.TESTINY_API_KEY}`,
+      },
+      body: JSON.stringify(payload),
+    });
 
-      if (!response.ok) {
-        console.error('Failed to send results:', await response.text());
-      } else {
-        console.log('Results successfully sent to Testiny!');
-      }
-    } catch (err) {
-      console.error('Error sending results to Testiny:', err);
+    if (!response.ok) {
+      console.error('Failed to send results:', await response.text());
+    } else {
+      console.log('Results successfully sent to Testiny!');
     }
   }
 }
