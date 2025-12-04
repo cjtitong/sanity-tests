@@ -31,12 +31,11 @@ spec:
             steps {
                 checkout scm
                 script {
-                    
                     sh 'git config --global --add safe.directory $WORKSPACE'
-
                     SHORT_COMMIT = sh(script: "git rev-parse --short=7 HEAD", returnStdout: true).trim()
                     env.SHORT_COMMIT = SHORT_COMMIT
 
+                    // Generate unique test run name for each build
                     env.TEST_RUN_NAME = "${env.PIPELINE_NAME} - ${env.BRANCH_NAME} - #${env.BUILD_NUMBER} - ${env.SHORT_COMMIT}"
                     echo "Testiny Test Run Name: ${env.TEST_RUN_NAME}"
                 }
@@ -56,6 +55,7 @@ spec:
             steps {
                 script {
                     if (fileExists('testiny-reporter.js')) {
+                        // Pass the generated test run name via CLI
                         sh "node testiny-reporter.js --testRunName='${env.TEST_RUN_NAME}'"
                     } else {
                         echo "Testiny reporter script not found, skipping upload."
