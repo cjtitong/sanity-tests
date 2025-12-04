@@ -33,9 +33,13 @@ spec:
             steps {
                 checkout scm
                 script {
+                    // Mark workspace as safe for Git to avoid dubious ownership error
+                    sh 'git config --global --add safe.directory $WORKSPACE'
+
                     // Get short commit hash (7 chars)
                     SHORT_COMMIT = sh(script: "git rev-parse --short=7 HEAD", returnStdout: true).trim()
                     env.SHORT_COMMIT = SHORT_COMMIT
+
                     // Generate Testiny test run name
                     env.TEST_RUN_NAME = "${env.TEST_RUN_ID} - ${env.PIPELINE_NAME} - ${env.BRANCH_NAME} - #${env.BUILD_NUMBER} - ${env.SHORT_COMMIT}"
                     echo "Testiny Test Run Name: ${env.TEST_RUN_NAME}"
