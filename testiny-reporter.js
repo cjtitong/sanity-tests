@@ -1,10 +1,18 @@
 import fetch from 'node-fetch';
 
+// Parse CLI argument for --testRunName
+let testRunNameArg = null;
+process.argv.forEach((arg) => {
+  if (arg.startsWith('--testRunName=')) {
+    testRunNameArg = arg.split('=')[1];
+  }
+});
+
 class TestinyReporter {
   constructor() {
     this.results = [];
-    // Allow passing testRunName via env variable or CLI argument
-    this.testRunName = process.env.TEST_RUN_NAME || null;
+    // Use CLI argument first, then environment variable
+    this.testRunName = testRunNameArg || process.env.TEST_RUN_NAME || null;
   }
 
   onTestBegin(test) {
@@ -28,7 +36,7 @@ class TestinyReporter {
     const payload = {
       projectId: process.env.TESTINY_PROJECT_ID,
       testRunId: process.env.TESTINY_TEST_RUN_ID,
-      testRunName: this.testRunName, // include the generated name
+      testRunName: this.testRunName, // will now use CLI argument if provided
       results: this.results,
     };
 
