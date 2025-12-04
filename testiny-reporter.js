@@ -71,7 +71,7 @@ class TestinyReporter {
 
       const payload = {
         projectId: process.env.TESTINY_PROJECT_ID,
-        testRunId: this.testRunId,
+        testRunId: this.testRunId, // use dynamically created ID
         results: this.results,
       };
 
