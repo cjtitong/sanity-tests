@@ -13,6 +13,7 @@ class TestinyReporter {
     this.results = [];
     // Use CLI argument first, then environment variable
     this.testRunName = testRunNameArg || process.env.TEST_RUN_NAME || null;
+    this.testRunId = null; // Will be set after creating a new test run
   }
 
   onTestBegin(test) {
@@ -30,17 +31,50 @@ class TestinyReporter {
     console.log(`Finished test: ${test.title} → ${result.status}`);
   }
 
-  async onEnd() {
-    console.log('All tests finished. Sending results to Testiny...');
-
+  async createTestRun() {
+    console.log('Creating a new Testiny test run...');
     const payload = {
       projectId: process.env.TESTINY_PROJECT_ID,
-      testRunId: process.env.TESTINY_TEST_RUN_ID,
-      testRunName: this.testRunName, // will now use CLI argument if provided
-      results: this.results,
+      name: this.testRunName,
     };
 
     try {
+      const response = await fetch('https://api.testiny.com/test-runs', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${process.env.TESTINY_API_KEY}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error(await response.text());
+      }
+
+      const data = await response.json();
+      this.testRunId = data.id; // Capture the new run ID
+      console.log(`Created Testiny test run with ID: ${this.testRunId}`);
+    } catch (err) {
+      console.error('Failed to create new test run:', err);
+      throw err;
+    }
+  }
+
+  async onEnd() {
+    try {
+      if (!this.testRunId) {
+        await this.createTestRun(); // Ensure we have a test run ID
+      }
+
+      console.log('Sending test results to Testiny...');
+
+      const payload = {
+        projectId: process.env.TESTINY_PROJECT_ID,
+        testRunId: this.testRunId,
+        results: this.results,
+      };
+
       const response = await fetch('https://api.testiny.com/results', {
         method: 'POST',
         headers: {
